@@ -1,0 +1,52 @@
+clear all;
+
+syms p1 p4
+
+p3 = 0;
+% p1 = 0.01;
+
+% p1 = 0.1;
+% p1 = 0.1;
+% p1 = 0.1;
+% 
+% p3=0.001;
+% 
+% p4 = 0.01;
+% p4 = 0.01;
+
+e_0 = [1 0 0]';
+e_1 = [0 1 0]';
+e_2 = [0 0 1]';
+
+E= kron(e_0,e_0) * kron(e_0,e_0)' + (1-p1)* kron(e_0,e_1) * kron(e_0,e_1)'...
+    +(1-p1-p4)* kron(e_0,e_2) * kron(e_0,e_2)'...
+    +(1-p1)* kron(e_1,e_0) * kron(e_1,e_0)'...
+    +(1-p1 - p1-p3-p4-p4)* kron(e_1,e_1) * kron(e_1,e_1)'...
+    +(1-p1 -p1)* kron(e_1,e_2) * kron(e_1,e_2)'...
+    +(1-p1 -p4)* kron(e_2,e_0) * kron(e_2,e_0)'...
+    +(1-p1 -p1)* kron(e_2,e_1) * kron(e_2,e_1)'...
+    +(1-p1 -p1-p3)* kron(e_2,e_2) * kron(e_2,e_2)';
+
+E = E + p1*(kron(e_1,e_0)*kron(e_2,e_0)' + kron(e_2,e_0)*kron(e_1,e_0)'...
+   +kron(e_1,e_1)*kron(e_2,e_1)' + kron(e_2,e_1)*kron(e_1,e_1)'...
+   +kron(e_1,e_2)*kron(e_2,e_2)' + kron(e_2,e_2)*kron(e_1,e_2)');
+
+E = E + p1*(kron(e_0,e_1)*kron(e_0,e_2)' + kron(e_0,e_2)*kron(e_0,e_1)'...
+   +kron(e_1,e_1)*kron(e_1,e_2)' + kron(e_1,e_2)*kron(e_1,e_1)'...
+   +kron(e_2,e_1)*kron(e_2,e_2)' + kron(e_2,e_2)*kron(e_2,e_1)');
+
+E = E + p3 * (kron(e_1,e_1)*kron(e_2,e_2)' + kron(e_2,e_2)*kron(e_1,e_1)');
+E = E + p4 * (kron(e_0,e_2)*kron(e_1,e_1)' + kron(e_1,e_1)*kron(e_0,e_2)');
+E = E + p4 * (kron(e_1,e_1)*kron(e_2,e_0)' + kron(e_2,e_0)*kron(e_1,e_1)');
+
+
+U_1 = [1/2 1/2 0;1/2 1/2 0;0 0 1];
+P = kron(U_1, U_1);
+
+UF = P * E;
+
+[states, vals] = eig(UF);
+
+vals = diag(vals);
+
+
